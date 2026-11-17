@@ -2,7 +2,8 @@
 
 An unofficial Omarchy bar widget for the AmneziaVPN desktop application.
 Control your connection, see the selected destination, and check VPN traffic
-without opening the application. Plugin ID: `jmihbay.amneziaVPN`.
+without opening the application. 
+Plugin ID: `jmihbay.amneziaVPN`.
 
 ![AmneziaVPN widget in English](screenshots/preview-en.png)
 
