@@ -21,7 +21,9 @@ Plugin ID: `jmihbay.amneziaVPN`.
 - Localized interface following the Omarchy language automatically (see Languages below).
 - Rotating header captions while the card is open.
 
-![Russian interface on another theme](screenshots/preview-ru.png)
+![AmneziaVPN widget on a purple theme](screenshots/preview-purple.png)
+
+![AmneziaVPN widget on a green theme](screenshots/preview-green.png)
 
 ## Requirements
 
