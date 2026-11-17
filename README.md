@@ -1,4 +1,4 @@
-# AmneziaVPN for Omarchy
+# [AmneziaVPN](https://amnezia.org/) for [Omarchy](https://omarchy.org/)
 
 An unofficial Omarchy bar widget for the AmneziaVPN desktop application.
 Control your connection, see the selected destination, and check VPN traffic
