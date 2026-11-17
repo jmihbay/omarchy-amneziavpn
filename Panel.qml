@@ -359,14 +359,17 @@ Ui.Panel {
                     font.pixelSize: root.themeFont.body
                     wrapMode: Text.WordWrap
                 }
-                GridLayout {
+                RowLayout {
                     Layout.fillWidth: true
                     visible: root.state === "connected"
-                    columns: 2
-                    columnSpacing: Commons.Style.space(20)
-                    rowSpacing: root.themeSpacing.labelGap
+                    spacing: Commons.Style.space(6)
                     StatLabel { text: strings.t("durationLabel") }
-                    StatValue { text: root.observedSince > 0 ? root.elapsed() : "—" }
+                    StatValue {
+                        Layout.fillWidth: false
+                        horizontalAlignment: Text.AlignLeft
+                        text: root.observedSince > 0 ? root.elapsed() : "—"
+                    }
+                    Item { Layout.fillWidth: true }
                 }
                 GridLayout {
                     Layout.fillWidth: true
