@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "j1z3.amneziaVPN",
+  "name": "AmneziaVPN",
+  "version": "0.2.0",
+  "author": "j1z3",
+  "license": "GPL-3.0-only",
+  "description": "Unofficial AmneziaVPN controls, selected country and live VPN traffic statistics for the Omarchy bar.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "AmneziaVPN",
+    "description": "VPN connection switch, selected destination, connection duration and traffic statistics.",
+    "category": "Network",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
