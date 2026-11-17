@@ -18,7 +18,7 @@ Plugin ID: `jmihbay.amneziaVPN`.
   Display only: the widget cannot change the profile or country.
 - Observed connection duration, download/upload rates and received/sent totals.
 - Open or start AmneziaVPN and invoke its native “Visit website” tray action.
-- English and Russian interface, following the Omarchy language automatically.
+- Localized interface following the Omarchy language automatically (see Languages below).
 - Rotating header captions while the card is open.
 
 ![Russian interface on another theme](screenshots/preview-ru.png)
@@ -91,13 +91,30 @@ omarchy plugin enable jmihbay.amneziaVPN
 For an installation managed by Omarchy, removal is available with
 `omarchy plugin remove jmihbay.amneziaVPN`.
 
+## Languages
+
+The widget follows Omarchy's selected language. Catalogs are included for:
+
+- English (`en`), Russian (`ru`), Spanish (`es-MX`), Brazilian Portuguese
+  (`pt-BR`), German (`de`), French (`fr`), Simplified Chinese (`zh-CN`),
+  Ukrainian (`uk`) and Uzbek (`uz`).
+- Belarusian (`be`), Kazakh (`kk`), Azerbaijani (`az`), Armenian (`hy`),
+  Georgian (`ka`), Kyrgyz (`ky`) and Tajik (`tg`) are prepared for hosts that
+  support those language codes. They are not selectable in the installed
+  Omarchy language list used during development.
+
+New translations have not yet been reviewed by native speakers. Corrections
+are welcome. This translates the widget's own labels and captions only.
+AmneziaVPN's country/profile text is shown as supplied, and tray action
+recognition remains limited to English and Russian AmneziaVPN menus.
+
 ## Data and limitations
 
 The widget uses AmneziaVPN's D-Bus tray menu for actions and connection status.
 This status is not an independent internet or tunnel health check. Unknown
 menu translations disable the relevant controls rather than guessing actions.
-The interface has English and Russian catalogs; other Omarchy languages fall
-back to English. Country names come from Amnezia's saved settings and may use
+The interface uses the catalogs listed below; missing translations fall back
+to English. Country names come from Amnezia's saved settings and may use
 a different language.
 
 The selected profile and country are read from

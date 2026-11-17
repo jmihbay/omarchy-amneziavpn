@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "jmihbay.amneziaVPN",
   "name": "AmneziaVPN",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "jmihbay",
   "license": "GPL-3.0-only",
   "description": "Unofficial AmneziaVPN controls, selected country and live VPN traffic statistics for the Omarchy bar.",

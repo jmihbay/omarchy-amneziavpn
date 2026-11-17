@@ -19,7 +19,7 @@ mkdir -p "$destination/i18n"
 cp -- "$source_dir/logo.svg" "$destination/"
 cp -- "$source_dir/profile.py" "$destination/"
 cp -- "$source_dir/Panel.qml" "$destination/"
-cp -- "$source_dir/i18n/en.json" "$source_dir/i18n/ru.json" "$destination/i18n/"
+cp -- "$source_dir"/i18n/*.json "$destination/i18n/"
 cp -- "$source_dir/manifest.json" "$destination/"
 rm -f -- "$destination/AmneziaWidget.qml"
 # Migrate both previous IDs without changing position or widget settings.
