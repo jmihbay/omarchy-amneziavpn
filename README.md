@@ -2,7 +2,7 @@
 
 An unofficial Omarchy bar widget for the AmneziaVPN desktop application.
 Control your connection, see the selected destination, and check VPN traffic
-without opening the application. Plugin ID: `j1z3.amneziaVPN`.
+without opening the application. Plugin ID: `jmihbay.amneziaVPN`.
 
 ![AmneziaVPN widget in English](screenshots/preview-en.png)
 
@@ -36,13 +36,13 @@ without opening the application. Plugin ID: `j1z3.amneziaVPN`.
 ## Install from GitHub
 
 ```bash
-omarchy plugin add https://github.com/jzs-meman/omarchy-amneziavpn.git --enable
+omarchy plugin add https://github.com/jmihbay/omarchy-amneziavpn.git --enable
 ```
 
 Update a git-managed installation:
 
 ```bash
-omarchy plugin update j1z3.amneziaVPN
+omarchy plugin update jmihbay.amneziaVPN
 ```
 
 ## Install from a local checkout
@@ -54,10 +54,10 @@ bash install.sh
 ```
 
 The installer validates and copies the plugin into
-`${XDG_CONFIG_HOME:-~/.config}/omarchy/plugins/j1z3.amneziaVPN`.
+`${XDG_CONFIG_HOME:-~/.config}/omarchy/plugins/jmihbay.amneziaVPN`.
 A first installation enables the widget on the right side of the bar.
 Subsequent runs preserve its position, settings and enabled/disabled state.
-The installer also migrates the earlier `local.amnezia` ID in place and backs
+The installer also migrates the earlier `local.amnezia` and `j1z3.amneziaVPN` IDs in place and backs
 up `shell.json` before that migration.
 
 Omarchy normally reloads changed plugins automatically. If the old component
@@ -82,12 +82,12 @@ the card asks you to check AmneziaVPN.
 Disable or re-enable the widget without uninstalling it:
 
 ```bash
-omarchy plugin disable j1z3.amneziaVPN
-omarchy plugin enable j1z3.amneziaVPN
+omarchy plugin disable jmihbay.amneziaVPN
+omarchy plugin enable jmihbay.amneziaVPN
 ```
 
 For an installation managed by Omarchy, removal is available with
-`omarchy plugin remove j1z3.amneziaVPN`.
+`omarchy plugin remove jmihbay.amneziaVPN`.
 
 ## Data and limitations
 
@@ -143,7 +143,7 @@ has not been established.
 GPL-3.0-only. See [LICENSE](LICENSE) and
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Copyright (C) 2026 j1z3 for the original plugin code and documentation.
+Copyright (C) 2026 jmihbay for the original plugin code and documentation.
 The included Amnezia logo is adapted from the AmneziaVPN client; it is not an
 original design by this plugin's author. Amnezia names and branding belong to
 their respective owners. This project is not affiliated with or endorsed by

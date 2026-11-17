@@ -2,12 +2,17 @@
 set -euo pipefail
 source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 config_root="${XDG_CONFIG_HOME:-$HOME/.config}/omarchy"
-plugin_id="j1z3.amneziaVPN"
+plugin_id="jmihbay.amneziaVPN"
 destination="$config_root/plugins/$plugin_id"
-legacy="$config_root/plugins/local.amnezia"
+legacy_ids=("local.amnezia" "j1z3.amneziaVPN")
 first_install=0
-if [[ ! -f "$destination/manifest.json" && ! -f "$legacy/manifest.json" ]]; then
+if [[ ! -f "$destination/manifest.json" ]]; then
   first_install=1
+  for legacy_id in "${legacy_ids[@]}"; do
+    if [[ -f "$config_root/plugins/$legacy_id/manifest.json" ]]; then
+      first_install=0
+    fi
+  done
 fi
 omarchy plugin validate "$source_dir"
 mkdir -p "$destination/i18n"
@@ -17,20 +22,24 @@ cp -- "$source_dir/Panel.qml" "$destination/"
 cp -- "$source_dir/i18n/en.json" "$source_dir/i18n/ru.json" "$destination/i18n/"
 cp -- "$source_dir/manifest.json" "$destination/"
 rm -f -- "$destination/AmneziaWidget.qml"
-# Migrate the legacy ID in place, retaining section, index and settings.
-if [[ -f "$config_root/shell.json" ]] && jq -e '.. | strings | select(. == "local.amnezia")' "$config_root/shell.json" >/dev/null; then
-  cp -p -- "$config_root/shell.json" "$config_root/shell.json.before-amnezia-id-migration.bak"
+# Migrate both previous IDs without changing position or widget settings.
+if [[ -f "$config_root/shell.json" ]] && jq -e '.. | strings | select(. == "local.amnezia" or . == "j1z3.amneziaVPN")' "$config_root/shell.json" >/dev/null; then
+  backup=$(mktemp "$config_root/shell.json.before-amnezia-id-migration.XXXXXX.bak")
+  cp -p -- "$config_root/shell.json" "$backup"
   temporary=$(mktemp "$config_root/shell.json.amnezia.XXXXXX")
-  jq 'walk(if type == "string" and . == "local.amnezia" then "j1z3.amneziaVPN" else . end)' "$config_root/shell.json" > "$temporary"
+  jq --arg id "$plugin_id" 'walk(if type == "string" and (. == "local.amnezia" or . == "j1z3.amneziaVPN") then $id else . end)' "$config_root/shell.json" > "$temporary"
   mv -- "$temporary" "$config_root/shell.json"
 fi
-if [[ -f "$legacy/manifest.json" ]]; then
-  mv -- "$legacy/manifest.json" "$legacy/manifest.json.before-id-migration.bak"
-fi
+for legacy_id in "${legacy_ids[@]}"; do
+  legacy="$config_root/plugins/$legacy_id"
+  if [[ -f "$legacy/manifest.json" ]]; then
+    mv -- "$legacy/manifest.json" "$legacy/manifest.json.before-id-migration.bak"
+  fi
+done
 omarchy-shell shell rescanPlugins >/dev/null
 discovered=0
 for ((attempt = 0; attempt < 40; attempt++)); do
-  if omarchy plugin list --json | jq -e 'any(.[]; .id == "j1z3.amneziaVPN")' >/dev/null; then
+  if omarchy plugin list --json | jq -e 'any(.[]; .id == "jmihbay.amneziaVPN")' >/dev/null; then
     discovered=1
     break
   fi

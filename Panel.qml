@@ -10,8 +10,8 @@ import qs.Ui as Ui
 
 Ui.Panel {
     id: root
-    moduleName: "j1z3.amneziaVPN"
-    ipcTarget: "j1z3.amneziaVPN"
+    moduleName: "jmihbay.amneziaVPN"
+    ipcTarget: "jmihbay.amneziaVPN"
     implicitWidth: root.bar && root.bar.vertical ? root.bar.barSize : Commons.Style.bar.iconSlot
     implicitHeight: root.bar && root.bar.vertical ? Commons.Style.bar.iconSlot : (root.bar ? root.bar.barSize : Commons.Style.bar.sizeHorizontal)
     width: implicitWidth
