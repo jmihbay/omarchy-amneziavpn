@@ -13,7 +13,8 @@ without opening the application. Plugin ID: `jmihbay.amneziaVPN`.
   is not running. Pulsing respects Omarchy's animation setting.
 - Connection switch in the card header; right-click the bar icon to connect or
   disconnect directly.
-- Selected profile, country and country flag.
+- Display the profile and country selected in AmneziaVPN, with a country flag.
+  Display only: the widget cannot change the profile or country.
 - Observed connection duration, download/upload rates and received/sent totals.
 - Open or start AmneziaVPN and invoke its native “Visit website” tray action.
 - English and Russian interface, following the Omarchy language automatically.
@@ -101,7 +102,9 @@ a different language.
 The selected profile and country are read from
 `${XDG_CONFIG_HOME:-~/.config}/AmneziaVPN.ORG/AmneziaVPN.conf`.
 These describe the saved selection, not a separately verified live endpoint.
-Country selection remains in the AmneziaVPN application.
+To change the country or profile, use the AmneziaVPN application. The widget
+only displays the saved selection; it does not offer country, profile or flag
+selection. The flag is derived automatically from the country code.
 
 The profile reader parses a settings file that can contain credentials, but
 returns only the profile name, country name and country code. It does not log
