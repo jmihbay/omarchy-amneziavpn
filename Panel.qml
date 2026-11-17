@@ -10,18 +10,20 @@ import qs.Ui as Ui
 
 Ui.Panel {
     id: root
+    readonly property var hostBar: root.bar
+    readonly property var themeBar: Commons.Style.bar
     // Omarchy exposes these token groups as dynamic QObjects.
     readonly property var themeFont: Commons.Style.font
     readonly property var themeSpacing: Commons.Style.spacing
     moduleName: "jmihbay.amneziavpn"
     ipcTarget: "jmihbay.amneziavpn"
-    implicitWidth: root.bar && root.bar.vertical ? root.bar.barSize : Commons.Style.bar.iconSlot
-    implicitHeight: root.bar && root.bar.vertical ? Commons.Style.bar.iconSlot : (root.bar ? root.bar.barSize : Commons.Style.bar.sizeHorizontal)
+    implicitWidth: root.hostBar && root.hostBar.vertical ? root.hostBar.barSize : root.themeBar.iconSlot
+    implicitHeight: root.hostBar && root.hostBar.vertical ? root.themeBar.iconSlot : (root.hostBar ? root.hostBar.barSize : root.themeBar.sizeHorizontal)
     width: implicitWidth
     height: implicitHeight
     readonly property var trayItem: {
-        var items = SystemTray.items.values
-        for (var i = 0; i < items.length; i++) {
+        let items = SystemTray.items.values
+        for (let i = 0; i < items.length; i++) {
             if (String(items[i].id).toLowerCase() === "amneziavpn") return items[i]
         }
         return null
@@ -32,13 +34,13 @@ Ui.Panel {
     readonly property var websiteEntry: action("website")
     readonly property bool canConnect: !!connectEntry && connectEntry.enabled
     readonly property bool canDisconnect: !!disconnectEntry && disconnectEntry.enabled
-    readonly property string state: !trayItem ? "stopped"
+    readonly property string connectionState: !trayItem ? "stopped"
         : canConnect && !canDisconnect ? "disconnected"
         : canDisconnect && !canConnect ? "connected"
         : connectEntry && disconnectEntry && !canConnect && !canDisconnect ? "transition" : "unknown"
     property string pendingState: ""
     property bool actionTimedOut: false
-    readonly property string statusKey: pendingState !== "" ? "transition" : state
+    readonly property string statusKey: pendingState !== "" ? "transition" : connectionState
 
     Commons.Translations { id: strings; directory: Qt.resolvedUrl("i18n") }
     QsMenuOpener { id: menu; menu: root.trayItem ? root.trayItem.menu : null }
@@ -46,35 +48,35 @@ Ui.Panel {
     // Discover actions each time: D-Bus owners and menu IDs change on restart.
     // Unknown translations deliberately disable switching rather than guess.
     function action(kind) {
-        var labels = {
+        let labels = {
             connect: ["подключиться", "connect"],
             disconnect: ["отключиться", "disconnect"],
             open: ["показать amneziavpn", "show amneziavpn", "show"],
             website: ["посетить сайт", "visit website"]
         }
-        var entries = menu.children.values
-        for (var i = 0; i < entries.length; i++) {
-            var entry = entries[i]
-            var label = String(entry.text || "").replace(/&/g, "").trim().toLowerCase()
+        let entries = menu.children.values
+        for (let i = 0; i < entries.length; i++) {
+            let entry = entries[i]
+            let label = String(entry.text || "").replace(/&/g, "").trim().toLowerCase()
             if (!entry.isSeparator && labels[kind].indexOf(label) !== -1) return entry
         }
         return null
     }
     function switchConnection() {
         if (pendingState !== "") return
-        var entry = state === "connected" ? disconnectEntry : state === "disconnected" ? connectEntry : null
+        let entry = connectionState === "connected" ? disconnectEntry : connectionState === "disconnected" ? connectEntry : null
         if (!entry || !entry.enabled) return
         actionTimedOut = false
-        pendingState = state === "connected" ? "disconnected" : "connected"
+        pendingState = connectionState === "connected" ? "disconnected" : "connected"
         deadline.restart()
         entry.triggered()
     }
-    onStateChanged: {
-        observedSince = state === "connected" ? Date.now() : 0
+    onConnectionStateChanged: {
+        observedSince = connectionState === "connected" ? Date.now() : 0
         lastSample = 0
         rxSpeed = 0; txSpeed = 0
         if (root.opened) refreshData()
-        if (state === pendingState || state === "stopped") {
+        if (connectionState === pendingState || connectionState === "stopped") {
             pendingState = ""
             deadline.stop()
         }
@@ -92,7 +94,7 @@ Ui.Panel {
     property int taglineIndex: 0
     function countryFlag() {
         if (!/^[a-zA-Z]{2}$/.test(countryCode)) return ""
-        var code = countryCode.toUpperCase()
+        let code = countryCode.toUpperCase()
         return String.fromCodePoint(127397 + code.charCodeAt(0), 127397 + code.charCodeAt(1)) + " "
     }
     property double observedSince: 0
@@ -106,21 +108,21 @@ Ui.Panel {
     property bool txReady: false
     function bytes(value) {
         if (value < 0) return "—"
-        var units = ["B", "KiB", "MiB", "GiB", "TiB"]
-        var i = 0
+        let units = ["B", "KiB", "MiB", "GiB", "TiB"]
+        let i = 0
         while (value >= 1024 && i < units.length - 1) { value /= 1024; i++ }
         return Commons.I18n.formatNumber(value, i === 0 ? 0 : 1) + " " + units[i]
     }
     function elapsed() {
-        var seconds = Math.max(0, Math.floor((now - observedSince) / 1000))
+        let seconds = Math.max(0, Math.floor((now - observedSince) / 1000))
         return Math.floor(seconds / 3600) + ":" + String(Math.floor(seconds / 60) % 60).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0")
     }
     function sample() {
         if (!rxReady || !txReady) return
-        var rx = Number(rxFile.text().trim()), tx = Number(txFile.text().trim())
-        var stamp = Date.now()
+        let rx = Number(rxFile.text().trim()), tx = Number(txFile.text().trim())
+        let stamp = Date.now()
         if (!isFinite(rx) || !isFinite(tx) || rx < 0 || tx < 0) return
-        var dt = (stamp - lastSample) / 1000
+        let dt = (stamp - lastSample) / 1000
         rxSpeed = lastSample > 0 && rx >= rxBytes && dt > 0 ? (rx - rxBytes) / dt : 0
         txSpeed = lastSample > 0 && tx >= txBytes && dt > 0 ? (tx - txBytes) / dt : 0
         rxBytes = rx; txBytes = tx; lastSample = stamp
@@ -128,7 +130,7 @@ Ui.Panel {
     function refreshData() {
         now = Date.now()
         if (!profileReader.running) profileReader.running = true
-        if (state === "connected") {
+        if (connectionState === "connected") {
             rxReady = false; txReady = false
             rxFile.reload(); txFile.reload()
         } else { rxBytes = -1; txBytes = -1; lastSample = 0 }
@@ -144,7 +146,7 @@ Ui.Panel {
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    var data = JSON.parse(text)
+                    let data = JSON.parse(text)
                     root.profileName = data.name || ""
                     root.countryName = data.country || ""
                     root.countryCode = data.code || ""
@@ -172,7 +174,7 @@ Ui.Panel {
         running: root.opened
         onTriggered: {
             root.now = Date.now()
-            if (root.state === "connected") {
+            if (root.connectionState === "connected") {
                 root.rxReady = false; root.txReady = false
                 rxFile.reload(); txFile.reload()
             }
@@ -196,7 +198,7 @@ Ui.Panel {
         id: button
         width: root.width
         height: root.height
-        bar: root.bar
+        bar: root.hostBar
         iconComponent: Component {
             Item {
                 id: barMark
@@ -215,8 +217,8 @@ Ui.Panel {
                     width: button.iconSize * 1.12
                     height: width
                     opacity: barMark.changing ? barMark.pulse
-                        : root.state === "connected" ? 1
-                        : root.state === "stopped" ? 0.3 : 0.55
+                        : root.connectionState === "connected" ? 1
+                        : root.connectionState === "stopped" ? 0.3 : 0.55
                     Image {
                         anchors.fill: parent
                         source: Qt.resolvedUrl("logo.svg")
@@ -228,7 +230,7 @@ Ui.Panel {
                         }
                     }
                     Rectangle {
-                        visible: root.state === "disconnected" && !barMark.changing
+                        visible: root.connectionState === "disconnected" && !barMark.changing
                         anchors.centerIn: parent
                         width: parent.width * 1.15
                         height: Math.max(1, Commons.Style.space(1.5))
@@ -248,7 +250,7 @@ Ui.Panel {
         id: panel
         anchorItem: button
         owner: root
-        bar: root.bar
+        bar: root.hostBar
         open: root.opened
         focusTarget: panel.loadedContent
         contentWidth: panel.fittedContentWidth(Commons.Style.space(360))
@@ -262,9 +264,9 @@ Ui.Panel {
                 return index === 2 && websiteButton.enabled
             }
             function moveCursor(direction) {
-                var index = root.keyboardIndex
+                let index = root.keyboardIndex
                 if (index < 0) index = direction > 0 ? -1 : 3
-                for (var i = 0; i < 3; i++) {
+                for (let i = 0; i < 3; i++) {
                     index = (index + direction + 3) % 3
                     if (available(index)) { root.keyboardIndex = index; return }
                 }
@@ -326,11 +328,11 @@ Ui.Panel {
                         id: powerSwitch
                         hasCursor: root.keyboardIndex === 0 && interactive
                         onHovered: hovered => { if (hovered && interactive && !busy) root.keyboardIndex = 0 }
-                        checked: root.pendingState !== "" ? root.pendingState === "connected" : root.state === "connected"
-                        busy: root.pendingState !== "" || root.state === "transition"
-                        interactive: !!root.trayItem && (root.state === "connected" || root.state === "disconnected" || busy)
+                        checked: root.pendingState !== "" ? root.pendingState === "connected" : root.connectionState === "connected"
+                        busy: root.pendingState !== "" || root.connectionState === "transition"
+                        interactive: !!root.trayItem && (root.connectionState === "connected" || root.connectionState === "disconnected" || busy)
                         opacity: interactive ? 1 : 0.5
-                        Accessible.name: strings.t(root.state === "connected" ? "disconnect" : "connect")
+                        Accessible.name: strings.t(root.connectionState === "connected" ? "disconnect" : "connect")
                         onToggled: root.switchConnection()
                     }
                 }
@@ -361,7 +363,7 @@ Ui.Panel {
                 }
                 RowLayout {
                     Layout.fillWidth: true
-                    visible: root.state === "connected"
+                    visible: root.connectionState === "connected"
                     spacing: Commons.Style.space(6)
                     StatLabel { text: strings.t("durationLabel") }
                     StatValue {
@@ -373,7 +375,7 @@ Ui.Panel {
                 }
                 GridLayout {
                     Layout.fillWidth: true
-                    visible: root.state === "connected"
+                    visible: root.connectionState === "connected"
                     columns: 2
                     columnSpacing: Commons.Style.space(24)
                     rowSpacing: root.themeSpacing.labelGap
@@ -404,7 +406,7 @@ Ui.Panel {
                 }
                 Ui.PanelSeparator {
                     Layout.fillWidth: true
-                    visible: root.state === "connected"
+                    visible: root.connectionState === "connected"
                     foreground: Commons.Color.foreground
                 }
                 Text {
