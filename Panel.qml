@@ -10,6 +10,9 @@ import qs.Ui as Ui
 
 Ui.Panel {
     id: root
+    // Omarchy exposes these token groups as dynamic QObjects.
+    readonly property var themeFont: Commons.Style.font
+    readonly property var themeSpacing: Commons.Style.spacing
     moduleName: "jmihbay.amneziaVPN"
     ipcTarget: "jmihbay.amneziaVPN"
     implicitWidth: root.bar && root.bar.vertical ? root.bar.barSize : Commons.Style.bar.iconSlot
@@ -131,7 +134,7 @@ Ui.Panel {
     }
     onOpenedChanged: {
         lastSample = 0; rxSpeed = 0; txSpeed = 0
-        if (opened) refreshData()
+        if (root.opened) root.refreshData()
     }
     Process {
         id: profileReader
@@ -278,8 +281,8 @@ Ui.Panel {
                             text: "AmneziaVPN"
                             textFormat: Text.PlainText
                             color: Commons.Color.foreground
-                            font.family: Commons.Style.font.family
-                            font.pixelSize: Commons.Style.font.title
+                            font.family: root.themeFont.family
+                            font.pixelSize: root.themeFont.title
                             font.bold: true
                             elide: Text.ElideRight
                         }
@@ -289,8 +292,8 @@ Ui.Panel {
                             textFormat: Text.PlainText
                             color: Commons.Color.foreground
                             opacity: 0.65
-                            font.family: Commons.Style.font.family
-                            font.pixelSize: Commons.Style.font.caption
+                            font.family: root.themeFont.family
+                            font.pixelSize: root.themeFont.caption
                             elide: Text.ElideRight
                         }
                     }
@@ -316,8 +319,8 @@ Ui.Panel {
                     text: root.countryFlag() + (root.countryName ? root.countryName + " · " : "") + root.profileName
                     textFormat: Text.PlainText
                     color: Commons.Color.foreground
-                    font.family: Commons.Style.font.family
-                    font.pixelSize: Commons.Style.font.body + Commons.Style.space(1)
+                    font.family: root.themeFont.family
+                    font.pixelSize: root.themeFont.body + Commons.Style.space(1)
                     font.weight: Font.Medium
                     wrapMode: Text.WordWrap
                 }
@@ -327,8 +330,8 @@ Ui.Panel {
                     text: strings.t(root.statusKey)
                     textFormat: Text.PlainText
                     color: Commons.Color.foreground
-                    font.family: Commons.Style.font.family
-                    font.pixelSize: Commons.Style.font.body
+                    font.family: root.themeFont.family
+                    font.pixelSize: root.themeFont.body
                     wrapMode: Text.WordWrap
                 }
                 GridLayout {
@@ -336,7 +339,7 @@ Ui.Panel {
                     visible: root.state === "connected"
                     columns: 2
                     columnSpacing: Commons.Style.space(20)
-                    rowSpacing: Commons.Style.spacing.labelGap
+                    rowSpacing: root.themeSpacing.labelGap
                     StatLabel { text: strings.t("durationLabel") }
                     StatValue { text: root.observedSince > 0 ? root.elapsed() : "—" }
                 }
@@ -345,7 +348,7 @@ Ui.Panel {
                     visible: root.state === "connected"
                     columns: 2
                     columnSpacing: Commons.Style.space(24)
-                    rowSpacing: Commons.Style.spacing.labelGap
+                    rowSpacing: root.themeSpacing.labelGap
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: Commons.Style.space(6)
@@ -382,8 +385,8 @@ Ui.Panel {
                     text: strings.t("timeout")
                     textFormat: Text.PlainText
                     color: Commons.Color.urgent
-                    font.family: Commons.Style.font.family
-                    font.pixelSize: Commons.Style.font.caption
+                    font.family: root.themeFont.family
+                    font.pixelSize: root.themeFont.caption
                     wrapMode: Text.WordWrap
                 }
                 RowLayout {
@@ -392,7 +395,7 @@ Ui.Panel {
                     Ui.Button {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
-                        fontSize: Commons.Style.font.caption
+                        fontSize: root.themeFont.caption
                         horizontalPadding: Commons.Style.space(6)
                         focusable: true
                         text: strings.t(root.trayItem ? "open" : "launch")
@@ -406,7 +409,7 @@ Ui.Panel {
                     Ui.Button {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
-                        fontSize: Commons.Style.font.caption
+                        fontSize: root.themeFont.caption
                         horizontalPadding: Commons.Style.space(6)
                         focusable: true
                         text: strings.t("website")
@@ -424,16 +427,16 @@ Ui.Panel {
         textFormat: Text.PlainText
         color: Commons.Color.foreground
         opacity: 0.6
-        font.family: Commons.Style.font.family
-        font.pixelSize: Commons.Style.font.bodySmall
+        font.family: root.themeFont.family
+        font.pixelSize: root.themeFont.bodySmall
     }
     component StatValue: Text {
         Layout.fillWidth: true
         horizontalAlignment: Text.AlignRight
         textFormat: Text.PlainText
         color: Commons.Color.foreground
-        font.family: Commons.Style.font.family
-        font.pixelSize: Commons.Style.font.bodySmall
+        font.family: root.themeFont.family
+        font.pixelSize: root.themeFont.bodySmall
     }
 
 }

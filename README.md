@@ -151,8 +151,13 @@ browser.
 ```bash
 omarchy plugin validate .
 bash -n install.sh
-/usr/lib/qt6/bin/qmllint --unqualified disable -I /usr/share/omarchy/shell Panel.qml
+bash scripts/lint.sh
 ```
+
+The lint script maps Quickshell’s runtime `qs` namespace to the installed
+Omarchy shell in a temporary import directory. It requires zero warnings and
+does not disable diagnostic categories. Set `OMARCHY_PATH` or `QMLLINT` if
+your installation uses different paths.
 
 The widget has been manually checked on the author's system, including
 connection controls, application restarts, themes and bar placement.
