@@ -88,6 +88,7 @@ Ui.Panel {
     property string profileName: ""
     property string countryName: ""
     property string countryCode: ""
+    property int keyboardIndex: -1
     property int taglineIndex: 0
     function countryFlag() {
         if (!/^[a-zA-Z]{2}$/.test(countryCode)) return ""
@@ -133,6 +134,7 @@ Ui.Panel {
         } else { rxBytes = -1; txBytes = -1; lastSample = 0 }
     }
     onOpenedChanged: {
+        root.keyboardIndex = -1
         lastSample = 0; rxSpeed = 0; txSpeed = 0
         if (root.opened) root.refreshData()
     }
@@ -251,9 +253,32 @@ Ui.Panel {
         focusTarget: panel.loadedContent
         contentWidth: panel.fittedContentWidth(Commons.Style.space(360))
         contentHeight: panel.fittedContentHeight(panel.loadedContentHeight, Commons.Style.space(500))
-        content: FocusScope {
+        content: Ui.PanelKeyCatcher {
+            id: keyCatcher
             implicitHeight: column.implicitHeight
-            Keys.onEscapePressed: root.close()
+            function available(index) {
+                if (index === 0) return powerSwitch.interactive && !powerSwitch.busy
+                if (index === 1) return openButton.enabled
+                return index === 2 && websiteButton.enabled
+            }
+            function moveCursor(direction) {
+                var index = root.keyboardIndex
+                if (index < 0) index = direction > 0 ? -1 : 3
+                for (var i = 0; i < 3; i++) {
+                    index = (index + direction + 3) % 3
+                    if (available(index)) { root.keyboardIndex = index; return }
+                }
+                root.keyboardIndex = -1
+            }
+            onMoveRequested: (dx, dy) => keyCatcher.moveCursor(dy !== 0 ? dy : dx)
+            onActivateRequested: {
+                if (!keyCatcher.available(root.keyboardIndex)) return
+                if (root.keyboardIndex === 0) root.switchConnection()
+                else if (root.keyboardIndex === 1) openButton.clicked()
+                else websiteButton.clicked()
+            }
+            onCloseRequested: root.close()
+            onTabRequested: direction => root.switchPanel(direction)
             ColumnLayout {
                 id: column
                 width: parent.width
@@ -298,15 +323,15 @@ Ui.Panel {
                         }
                     }
                     Ui.ToggleSwitch {
+                        id: powerSwitch
+                        hasCursor: root.keyboardIndex === 0 && interactive
+                        onHovered: hovered => { if (hovered && interactive && !busy) root.keyboardIndex = 0 }
                         checked: root.pendingState !== "" ? root.pendingState === "connected" : root.state === "connected"
                         busy: root.pendingState !== "" || root.state === "transition"
                         interactive: !!root.trayItem && (root.state === "connected" || root.state === "disconnected" || busy)
                         opacity: interactive ? 1 : 0.5
-                        activeFocusOnTab: interactive
                         Accessible.name: strings.t(root.state === "connected" ? "disconnect" : "connect")
                         onToggled: root.switchConnection()
-                        Keys.onSpacePressed: if (interactive && !busy) root.switchConnection()
-                        Keys.onReturnPressed: if (interactive && !busy) root.switchConnection()
                     }
                 }
                 Ui.PanelSeparator {
@@ -393,11 +418,14 @@ Ui.Panel {
                     Layout.fillWidth: true
                     spacing: Commons.Style.space(8)
                     Ui.Button {
+                        id: openButton
+                        hasCursor: root.keyboardIndex === 1 && enabled
+                        onHovered: hovered => { if (hovered && enabled) root.keyboardIndex = 1 }
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
                         fontSize: root.themeFont.caption
                         horizontalPadding: Commons.Style.space(6)
-                        focusable: true
+                        focusable: false
                         text: strings.t(root.trayItem ? "open" : "launch")
                         enabled: !root.trayItem || (!!root.openEntry && root.openEntry.enabled)
                         onClicked: {
@@ -407,11 +435,14 @@ Ui.Panel {
                         }
                     }
                     Ui.Button {
+                        id: websiteButton
+                        hasCursor: root.keyboardIndex === 2 && enabled
+                        onHovered: hovered => { if (hovered && enabled) root.keyboardIndex = 2 }
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
                         fontSize: root.themeFont.caption
                         horizontalPadding: Commons.Style.space(6)
-                        focusable: true
+                        focusable: false
                         text: strings.t("website")
                         enabled: !!root.websiteEntry && root.websiteEntry.enabled
                         onClicked: {

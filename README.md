@@ -77,6 +77,16 @@ Left-click the bar icon to open the card. Use the header switch or right-click
 on the bar icon to connect/disconnect. AmneziaVPN must remain running for tray
 controls; if it is closed, the card offers a launch button.
 
+Keyboard controls follow Omarchy panels:
+
+- Arrow keys or `h`/`j`/`k`/`l` move the highlight through available actions.
+  Disabled actions and a busy connection switch are skipped.
+- `Enter` or `Space` activates the highlighted action. No action is selected
+  when the card first opens, preventing an accidental VPN toggle.
+- `Escape` closes the card; `Tab` / `Shift+Tab` switches to the next/previous
+  panel in the same bar section.
+- Hovering an action updates the highlight; mouse clicks work as before.
+
 Connection operations are not retried automatically. During an operation the
 switch blocks repeat requests. After 30 seconds without the expected state,
 the card asks you to check AmneziaVPN.
