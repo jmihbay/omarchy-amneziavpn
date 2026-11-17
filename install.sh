@@ -2,9 +2,9 @@
 set -euo pipefail
 source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 config_root="${XDG_CONFIG_HOME:-$HOME/.config}/omarchy"
-plugin_id="jmihbay.amneziaVPN"
+plugin_id="jmihbay.amneziavpn"
 destination="$config_root/plugins/$plugin_id"
-legacy_ids=("local.amnezia" "j1z3.amneziaVPN")
+legacy_ids=("local.amnezia" "j1z3.amneziaVPN" "jmihbay.amneziaVPN")
 first_install=0
 if [[ ! -f "$destination/manifest.json" ]]; then
   first_install=1
@@ -22,12 +22,12 @@ cp -- "$source_dir/Panel.qml" "$destination/"
 cp -- "$source_dir"/i18n/*.json "$destination/i18n/"
 cp -- "$source_dir/manifest.json" "$destination/"
 rm -f -- "$destination/AmneziaWidget.qml"
-# Migrate both previous IDs without changing position or widget settings.
-if [[ -f "$config_root/shell.json" ]] && jq -e '.. | strings | select(. == "local.amnezia" or . == "j1z3.amneziaVPN")' "$config_root/shell.json" >/dev/null; then
+# Migrate previous IDs without changing position or widget settings.
+if [[ -f "$config_root/shell.json" ]] && jq -e '.. | strings | select(. == "local.amnezia" or . == "j1z3.amneziaVPN" or . == "jmihbay.amneziaVPN")' "$config_root/shell.json" >/dev/null; then
   backup=$(mktemp "$config_root/shell.json.before-amnezia-id-migration.XXXXXX.bak")
   cp -p -- "$config_root/shell.json" "$backup"
   temporary=$(mktemp "$config_root/shell.json.amnezia.XXXXXX")
-  jq --arg id "$plugin_id" 'walk(if type == "string" and (. == "local.amnezia" or . == "j1z3.amneziaVPN") then $id else . end)' "$config_root/shell.json" > "$temporary"
+  jq --arg id "$plugin_id" 'walk(if type == "string" and (. == "local.amnezia" or . == "j1z3.amneziaVPN" or . == "jmihbay.amneziaVPN") then $id else . end)' "$config_root/shell.json" > "$temporary"
   mv -- "$temporary" "$config_root/shell.json"
 fi
 for legacy_id in "${legacy_ids[@]}"; do
@@ -39,7 +39,7 @@ done
 omarchy-shell shell rescanPlugins >/dev/null
 discovered=0
 for ((attempt = 0; attempt < 40; attempt++)); do
-  if omarchy plugin list --json | jq -e 'any(.[]; .id == "jmihbay.amneziaVPN")' >/dev/null; then
+  if omarchy plugin list --json | jq -e 'any(.[]; .id == "jmihbay.amneziavpn")' >/dev/null; then
     discovered=1
     break
   fi

@@ -13,8 +13,8 @@ Ui.Panel {
     // Omarchy exposes these token groups as dynamic QObjects.
     readonly property var themeFont: Commons.Style.font
     readonly property var themeSpacing: Commons.Style.spacing
-    moduleName: "jmihbay.amneziaVPN"
-    ipcTarget: "jmihbay.amneziaVPN"
+    moduleName: "jmihbay.amneziavpn"
+    ipcTarget: "jmihbay.amneziavpn"
     implicitWidth: root.bar && root.bar.vertical ? root.bar.barSize : Commons.Style.bar.iconSlot
     implicitHeight: root.bar && root.bar.vertical ? Commons.Style.bar.iconSlot : (root.bar ? root.bar.barSize : Commons.Style.bar.sizeHorizontal)
     width: implicitWidth
