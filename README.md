@@ -35,7 +35,7 @@ Plugin ID: `jmihbay.amneziavpn`.
 - Python 3 for reading the selected profile's display fields.
 - The `amn0` VPN interface for traffic statistics. Other interface names and
   VPN backends are not currently detected automatically.
-- Bash and jq for the local installer; no compilation is required.
+- No compilation or custom installation script is required.
 
 ## Install from GitHub
 
@@ -49,20 +49,16 @@ Update a git-managed installation:
 omarchy plugin update jmihbay.amneziavpn
 ```
 
-## Install from a local checkout
+## Installation behavior
 
-Run from the plugin directory:
+Installation, update and removal are handled by Omarchy's plugin manager.
+This repository has no custom installer and does not automatically migrate
+legacy plugin IDs, rewrite `shell.json`, replace occupied plugin directories
+or rename old manifests/backups. If Omarchy reports an existing installation,
+inspect it before deciding whether to update or remove it.
 
-```bash
-bash install.sh
-```
-
-The installer validates and copies the plugin into
-`${XDG_CONFIG_HOME:-~/.config}/omarchy/plugins/jmihbay.amneziavpn`.
-A first installation enables the widget on the right side of the bar.
-Subsequent runs preserve its position, settings and enabled/disabled state.
-The installer also migrates the earlier `local.amnezia`, `j1z3.amneziaVPN` and `jmihbay.amneziaVPN` IDs in place and backs
-up `shell.json` before that migration.
+For development, edit your own repository checkout and validate it with the
+commands below. Installation from GitHub is the supported installation path.
 
 Omarchy normally reloads changed plugins automatically. If the old component
 remains visible, run:
@@ -162,7 +158,7 @@ browser.
 
 ```bash
 omarchy plugin validate .
-bash -n install.sh
+bash -n scripts/lint.sh
 bash scripts/lint.sh
 ```
 
